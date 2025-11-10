@@ -1,0 +1,240 @@
+{
+  "permissions": {
+    "description": "Safe Rust development permissions - automatically allow common operations, require review for sensitive ones, block dangerous commands",
+
+    "network": {
+      "allowed_domains": [
+        "crates.io",
+        "static.crates.io",
+        "index.crates.io",
+        "docs.rs",
+        "doc.rust-lang.org",
+        "github.com",
+        "raw.githubusercontent.com",
+        "api.github.com",
+        "rust-lang.org",
+        "play.rust-lang.org"
+      ],
+      "require_approval_domains": [
+        "*.amazonaws.com",
+        "*.googleapis.com",
+        "*.azure.com",
+        "localhost",
+        "127.0.0.1"
+      ],
+      "blocked_domains": [
+        "known-malicious-domains-placeholder"
+      ],
+      "require_approval_for_new_domains": true
+    },
+
+    "filesystem": {
+      "allowed_paths": [
+        "${PROJECT_DIR}/**",
+        "${HOME}/.cargo/**",
+        "${PROJECT_DIR}/target/**"
+      ],
+      "blocked_paths": [
+        "/etc/**",
+        "/var/**",
+        "/usr/**",
+        "/root/**",
+        "${HOME}/.ssh/**",
+        "${HOME}/.aws/**",
+        "${HOME}/.config/**",
+        "/System/**",
+        "/Library/**"
+      ],
+      "require_approval_paths": [
+        "${HOME}/.*"
+      ]
+    },
+
+    "commands": {
+      "allowed": {
+        "cargo": [
+          "new",
+          "init",
+          "build",
+          "build --release",
+          "check",
+          "test",
+          "run",
+          "clean",
+          "doc",
+          "doc --open",
+          "clippy",
+          "clippy --all-targets --all-features -- -D warnings",
+          "fmt",
+          "fmt --all",
+          "tree",
+          "update",
+          "search",
+          "add",
+          "remove",
+          "audit",
+          "deny check"
+        ],
+        "rustup": [
+          "update",
+          "component add clippy",
+          "component add rustfmt",
+          "show",
+          "doc"
+        ],
+        "git": [
+          "status",
+          "diff",
+          "log",
+          "add",
+          "commit",
+          "push",
+          "pull",
+          "clone",
+          "checkout",
+          "branch"
+        ]
+      },
+
+      "require_approval": {
+        "patterns": [
+          "cargo install .*",
+          "cargo build --target-dir=(?!\\./target|target).*",
+          "std::process::Command",
+          "unsafe \\{",
+          "extern \"C\" \\{",
+          ".*\\.(ssh|aws|config)/.*"
+        ],
+        "description": [
+          "Installing global cargo tools",
+          "Building to non-standard target directory",
+          "Spawning system processes",
+          "Using unsafe Rust code blocks",
+          "Using FFI (Foreign Function Interface)",
+          "Accessing credential directories"
+        ]
+      },
+
+      "blocked": {
+        "patterns": [
+          "^sudo .*",
+          "rm -rf /.*",
+          "rm -rf ~.*",
+          "chmod -R 777",
+          "curl .* \\| .*sh",
+          "wget .* && bash",
+          "dd .*",
+          "mkfs.*",
+          "apt(-get)? install",
+          "yum install",
+          "brew install",
+          "pacman -S"
+        ],
+        "description": [
+          "Sudo commands require explicit user approval",
+          "Destructive rm -rf on root",
+          "Destructive rm -rf on home",
+          "Overly permissive chmod",
+          "Piped command execution (security risk)",
+          "Piped command execution (security risk)",
+          "Direct disk operations",
+          "Filesystem formatting",
+          "System package management",
+          "System package management",
+          "System package management",
+          "System package management"
+        ]
+      }
+    },
+
+    "code_patterns": {
+      "require_approval": {
+        "rust": [
+          {
+            "pattern": "unsafe\\s*\\{",
+            "reason": "Unsafe code blocks bypass Rust's safety guarantees"
+          },
+          {
+            "pattern": "extern\\s+\"C\"\\s*\\{",
+            "reason": "FFI calls require careful review for safety"
+          },
+          {
+            "pattern": "std::process::Command",
+            "reason": "Process spawning should be reviewed for security"
+          },
+          {
+            "pattern": "std::fs::(write|remove_file|remove_dir_all)\\([^)]*\\/etc",
+            "reason": "File operations outside project directory"
+          },
+          {
+            "pattern": "reqwest::get\\(.*user.*\\)",
+            "reason": "Network requests with user-provided URLs"
+          }
+        ]
+      }
+    },
+
+    "dependencies": {
+      "auto_approve": {
+        "min_downloads": 1000000,
+        "trusted_publishers": [
+          "tokio-rs",
+          "serde-rs",
+          "rust-lang",
+          "rust-lang-nursery"
+        ]
+      },
+      "require_review": {
+        "max_downloads": 10000,
+        "recently_updated": "7d",
+        "minimal_documentation": true
+      }
+    },
+
+    "environment_variables": {
+      "safe_to_read": [
+        "CARGO_HOME",
+        "RUSTUP_HOME",
+        "PATH",
+        "HOME",
+        "USER",
+        "RUST_BACKTRACE"
+      ],
+      "require_approval": [
+        "AWS_.*",
+        "DATABASE_URL",
+        "API_KEY",
+        "SECRET_.*",
+        "PASSWORD",
+        "TOKEN",
+        ".*_KEY",
+        ".*_SECRET"
+      ]
+    }
+  },
+
+  "workflow": {
+    "standard_build_cycle": [
+      "cargo fmt --all",
+      "cargo clippy --all-targets --all-features -- -D warnings",
+      "cargo test --all-features",
+      "cargo build"
+    ],
+    "pre_commit": [
+      "cargo fmt --all",
+      "cargo clippy --all-targets -- -D warnings",
+      "cargo test"
+    ]
+  },
+
+  "logging": {
+    "enabled": true,
+    "log_events": [
+      "network_requests",
+      "file_operations_outside_project",
+      "command_executions",
+      "dependency_additions",
+      "permission_denials"
+    ]
+  }
+}

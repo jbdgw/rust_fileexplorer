@@ -1,0 +1,44 @@
+# Rust
+/target/
+Cargo.lock
+**/*.rs.bk
+*.pdb
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.fleet/
+.helix/
+
+# OS
+.DS_Store
+Thumbs.db
+.AppleDouble
+.LSOverride
+
+# Test artifacts
+/test_output/
+/test_duplicates/
+/tmp/
+
+# User-specific files
+*.local
+*.user
+.env
+.env.local
+
+# Logs
+*.log
+*.out
+
+# Cache
+.cache/
+*.cache
+
+# Backup files
+*.bak
+*.backup
+*~

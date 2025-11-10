@@ -1,0 +1,133 @@
+[package]
+name = "fexplorer"
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name <you@example.com>"]
+description = "A fast, cross-platform file system explorer CLI"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/yourusername/fexplorer"
+readme = "README.md"
+keywords = ["cli", "filesystem", "explorer", "search", "tree"]
+categories = ["command-line-utilities", "filesystem"]
+
+[[bin]]
+name = "fexplorer"
+path = "src/main.rs"
+
+[[bin]]
+name = "px"
+path = "src/bin/px.rs"
+
+[dependencies]
+# CLI framework
+clap = { version = "4.5", features = ["derive", "cargo", "wrap_help"] }
+clap_complete = "4.5"
+
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Filesystem traversal
+walkdir = "2.5"
+ignore = "0.4"
+
+# Timestamps and dates
+chrono = { version = "0.4", features = ["serde"] }
+filetime = "0.2"
+time = { version = "0.3", optional = true }
+
+# Human-readable sizes
+humansize = "2.1"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+csv = "1.3"
+
+# Terminal coloring
+nu-ansi-term = "0.50"
+crossterm = { version = "0.28", features = ["event-stream"] }
+
+# Progress reporting
+indicatif = { version = "0.17", optional = true }
+
+# Parallel traversal
+rayon = { version = "1.10", optional = true }
+jwalk = { version = "0.8", optional = true }
+
+# File watching
+notify = { version = "6.1", optional = true }
+
+# Glob patterns
+globset = "0.4"
+
+# Regex
+regex = "1.11"
+
+# Fuzzy matching for px
+fuzzy-matcher = "0.3"
+
+# Content search (grep functionality)
+grep-searcher = { version = "0.1", optional = true }
+grep-matcher = { version = "0.1", optional = true }
+grep-regex = { version = "0.1", optional = true }
+encoding_rs = { version = "0.8", optional = true }
+
+# Duplicate detection
+blake3 = { version = "1.5", optional = true }
+dashmap = { version = "5.5", optional = true }
+
+# Interactive TUI
+ratatui = { version = "0.28", optional = true }
+tui-input = { version = "0.10", optional = true }
+
+# Git integration
+git2 = { version = "0.19", optional = true }
+
+# Configuration and profiles
+toml = "0.8"
+dirs = "5.0"
+
+# Template engine
+tera = { version = "1.20", optional = true }
+pulldown-cmark = { version = "0.12", optional = true }
+
+# Trend analysis database
+rusqlite = { version = "0.32", features = ["bundled"], optional = true }
+
+# Plugin system
+libloading = { version = "0.8", optional = true }
+wasmtime = { version = "25", optional = true }
+
+[dev-dependencies]
+assert_cmd = "2.0"
+predicates = "3.1"
+tempfile = "3.13"
+serial_test = "3.2"
+
+[features]
+default = ["parallel", "templates", "grep", "git"]
+parallel = ["rayon", "jwalk"]
+watch = ["notify"]
+progress = ["indicatif"]
+grep = ["grep-searcher", "grep-matcher", "grep-regex", "encoding_rs"]
+dedup = ["blake3", "dashmap"]
+tui = ["ratatui", "tui-input"]
+git = ["git2"]
+templates = ["tera", "pulldown-cmark"]
+trends = ["rusqlite", "time"]
+plugins = ["libloading"]
+plugins-wasm = ["wasmtime"]
+all = ["parallel", "watch", "progress", "grep", "dedup", "tui", "git", "templates", "trends", "plugins"]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+
+[profile.dev]
+opt-level = 0
+
+[profile.test]
+opt-level = 1
