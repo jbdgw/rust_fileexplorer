@@ -1,5 +1,5 @@
 use clap::Parser;
-use fexplorer::{
+use rust_filesearch::{
     cli::{
         self, parse_entry_kinds, parse_sort_key, parse_sort_order, Cli, Commands, ProfileCommand,
     },
@@ -168,7 +168,7 @@ fn main() -> Result<()> {
             line_numbers,
             common,
         } => {
-            use fexplorer::fs::content::{search_files, ContentSearcher};
+            use rust_filesearch::fs::content::{search_files, ContentSearcher};
 
             let config = build_traverse_config(&common, cli.quiet);
 
@@ -246,8 +246,8 @@ fn main() -> Result<()> {
             summary,
             common,
         } => {
-            use fexplorer::fs::dedup::{find_duplicates, DuplicateStats};
-            use fexplorer::util::parse_size;
+            use rust_filesearch::fs::dedup::{find_duplicates, DuplicateStats};
+            use rust_filesearch::util::parse_size;
 
             let config = build_traverse_config(&common, cli.quiet);
             let entries = walk_no_filter(&path, &config)?;
@@ -317,7 +317,7 @@ fn main() -> Result<()> {
             since,
             common,
         } => {
-            use fexplorer::fs::git::{
+            use rust_filesearch::fs::git::{
                 enrich_with_git_status, get_changed_since, is_git_repo, GitStatus,
             };
 
@@ -391,7 +391,7 @@ fn main() -> Result<()> {
 
         #[cfg(feature = "tui")]
         Commands::Interactive { path } => {
-            use fexplorer::tui::{ui, App};
+            use rust_filesearch::tui::{ui, App};
 
             let mut app = App::new(path)?;
             ui::run(&mut app).map_err(|e| FsError::IoError {
@@ -618,7 +618,7 @@ fn main() -> Result<()> {
             events,
             format,
         } => {
-            use fexplorer::fs::watch::FileWatcher;
+            use rust_filesearch::fs::watch::FileWatcher;
 
             let watcher = FileWatcher::new(events);
 
@@ -698,7 +698,7 @@ fn output_entries(entries: &[Entry], common: &cli::CommonArgs, no_color: bool) -
     // Check if template export is requested
     #[cfg(feature = "templates")]
     if let Some(template_name) = &common.template {
-        use fexplorer::output::templates::{export_with_template, TemplateFormat};
+        use rust_filesearch::output::templates::{export_with_template, TemplateFormat};
 
         let format = template_name.parse::<TemplateFormat>().map_err(|e| {
             FsError::InvalidFormat {

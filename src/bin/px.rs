@@ -5,8 +5,8 @@
 
 use anyhow::Result;
 use clap::{Parser, Subcommand};
-use fexplorer::config::PxConfig;
-use fexplorer::px::{commands, index::ProjectIndex};
+use rust_filesearch::config::PxConfig;
+use rust_filesearch::px::{commands, index::ProjectIndex};
 
 #[derive(Parser)]
 #[command(name = "px")]
