@@ -1,14 +1,16 @@
 [package]
-name = "fexplorer"
+name = "rust-filesearch"
 version = "0.1.0"
 edition = "2021"
-authors = ["Your Name <you@example.com>"]
-description = "A fast, cross-platform file system explorer CLI"
+authors = ["Jordan Bartlett <jordanb@doinggoodworks.com>"]
+description = "Fast developer tools: fexplorer (file explorer) and px (project switcher with fuzzy search and frecency)"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/yourusername/fexplorer"
+repository = "https://github.com/jbdgw/rust_fileexplorer"
 readme = "README.md"
-keywords = ["cli", "filesystem", "explorer", "search", "tree"]
-categories = ["command-line-utilities", "filesystem"]
+keywords = ["cli", "filesystem", "explorer", "fuzzy-search", "frecency"]
+categories = ["command-line-utilities", "filesystem", "development-tools"]
+documentation = "https://github.com/jbdgw/rust_fileexplorer/tree/main/docs"
+homepage = "https://github.com/jbdgw/rust_fileexplorer"
 
 [[bin]]
 name = "fexplorer"
